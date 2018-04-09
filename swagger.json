@@ -406,7 +406,7 @@
           },
           "required" : true
         }, {
-          "name" : "user_id",
+          "name" : "cust_id",
           "in" : "path",
           "schema" : {
             "type" : "integer"
