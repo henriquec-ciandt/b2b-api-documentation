@@ -1,0 +1,398 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "version" : "3.0",
+    "title" : "ABI API",
+    "description" : "."
+  },
+  "servers" : [ {
+    "url" : "https://api.example.com/v1",
+    "description" : "Production server (uses live data)"
+  } ],
+  "components" : {
+    "schemas" : {
+      "error" : {
+        "type" : "object",
+        "description" : "Server error",
+        "properties" : {
+          "errorMessageKey" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "DR_AccountRegistrationRequest" : {
+        "type" : "object",
+        "required" : [ "firstName", "lastName", "email" ],
+        "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "phone" : {
+            "type" : "string"
+          },
+          "businessName" : {
+            "type" : "string"
+          },
+          "addressLineOne" : {
+            "type" : "string"
+          },
+          "addressLineTwo" : {
+            "type" : "string"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "postalCode" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "origin" : {
+            "type" : "string",
+            "description" : "Indication of how the user heard about the app"
+          }
+        }
+      },
+      "DR_Account" : {
+        "type" : "object",
+        "properties" : null
+      },
+      "DR_DeliveryAddress" : {
+        "type" : "object",
+        "properties" : {
+          "addressID" : {
+            "type" : "string",
+            "description" : "A unique identifier for the address object."
+          },
+          "addressLineOne" : {
+            "type" : "string",
+            "description" : "The first line of the address."
+          },
+          "addressLineTwo" : {
+            "type" : "string",
+            "description" : "The second line of the address"
+          },
+          "city" : {
+            "type" : "string",
+            "description" : "The city."
+          },
+          "state" : {
+            "type" : "string",
+            "description" : "The state."
+          },
+          "zipCode" : {
+            "type" : "string",
+            "description" : "The zip code."
+          },
+          "contactName" : {
+            "type" : "string",
+            "description" : "The name of the person to contact at this address."
+          },
+          "contactPhone" : {
+            "type" : "string",
+            "description" : "The phone number of the person to contact at this address."
+          }
+        },
+        "required" : [ "addressID", "addressLineOne" ]
+      },
+      "PocResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "wholesaler_id" : {
+            "type" : "integer"
+          },
+          "credit_balance" : {
+            "type" : "number"
+          },
+          "total_credit" : {
+            "type" : "number"
+          },
+          "total_balance" : {
+            "type" : "number"
+          },
+          "payment_methods" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "representatives" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "id" : {
+                  "type" : "integer"
+                },
+                "name" : {
+                  "type" : "string"
+                },
+                "email" : {
+                  "type" : "string"
+                },
+                "phone" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "features" : {
+            "type" : "object",
+            "properties" : {
+              "prompt_po_number" : {
+                "type" : "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths" : {
+    "/token" : {
+      "post" : {
+        "summary" : "Generates a valid token to allow the user consumes the API's endpoints.",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "username" : {
+                    "type" : "string"
+                  },
+                  "password" : {
+                    "type" : "string"
+                  }
+                },
+                "example" : {
+                  "username" : "test@abi.com",
+                  "password" : "dk23fkd"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "token" : {
+                      "type" : "string",
+                      "description" : "A valid token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/poc/{cust_id}" : {
+      "get" : {
+        "summary" : "It gets all poc details.",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "X-Auth-Token",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        }, {
+          "name" : "cust_id",
+          "in" : "path",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true,
+          "description" : "Numeric id of the poc to get"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PocResponse"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unathourized Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/poc" : {
+      "put" : {
+        "summary" : "TODO Check with dirceu",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "X-Auth-Token",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        }, {
+          "in" : "header",
+          "name" : "request_id",
+          "description" : "This must be a GUID",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        } ],
+        "responses" : {
+          "401" : {
+            "description" : "Unathourized Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user" : {
+      "put" : {
+        "summary" : "Add a new user into the system",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "X-Auth-Token",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        }, {
+          "in" : "header",
+          "name" : "request_id",
+          "description" : "This must be a GUID.",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        }, {
+          "in" : "query",
+          "name" : "cust_id",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "first_name" : {
+                    "type" : "string"
+                  },
+                  "last_name" : {
+                    "type" : "string"
+                  },
+                  "email" : {
+                    "type" : "string"
+                  },
+                  "phone" : {
+                    "type" : "number"
+                  },
+                  "invoice_id" : {
+                    "type" : "integer"
+                  },
+                  "customer_id" : {
+                    "type" : "integer"
+                  },
+                  "region_id" : {
+                    "type" : "integer"
+                  },
+                  "secondary_customer_id" : {
+                    "type" : "integer"
+                  },
+                  "tax_id" : {
+                    "type" : "integer"
+                  },
+                  "distributor_id" : {
+                    "type" : "integer"
+                  },
+                  "wholesaler_id" : {
+                    "type" : "integer"
+                  },
+                  "zip_code" : {
+                    "type" : "integer"
+                  },
+                  "verification_code" : {
+                    "type" : "integer",
+                    "description" : "Exclusive for zones that use SMS validation."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "User added successfully."
+          },
+          "401" : {
+            "description" : "Unathourized Request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
