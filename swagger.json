@@ -393,6 +393,40 @@
           }
         }
       }
+    },
+    "/user/{user_id}" : {
+      "get" : {
+        "summary" : "It gets all user details.",
+        "parameters" : [ {
+          "in" : "header",
+          "name" : "X-Auth-Token",
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "required" : true
+        }, {
+          "name" : "cust_id",
+          "in" : "path",
+          "schema" : {
+            "type" : "integer"
+          },
+          "required" : true,
+          "description" : "Numeric id of the poc to get"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PocResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
